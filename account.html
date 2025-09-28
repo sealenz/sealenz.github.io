@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cổng thanh toán demo</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    
+    h2 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .auth-section {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      background-color: #ecf0f1;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .auth-tab.active {
+      background-color: #3498db;
+      color: white;
+    }
+    
+    .auth-form {
+      display: none;
+    }
+    
+    .auth-form.active {
+      display: block;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    
+    .user-info {
+      background-color: #2ecc71;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .product-list {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    .product-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .product-item:last-child {
+      border-bottom: none;
+    }
+    
+    .custom-payment {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    .custom-payment h3 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    
+    button:hover {
+      background-color: #2980b9;
+    }
+    
+    button:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+    
+    #qrcode {
+      text-align: center;
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    #qrcode img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #eee;
+      border-radius: 5px;
+    }
+    
+    .error {
+      color: #e74c3c;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    
+    .success {
+      color: #27ae60;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    
+    .balance-section {
+      background-color: #34495e;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .balance-amount {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    
+    .logout-btn {
+      background-color: #e74c3c;
+      margin-top: 10px;
+    }
+    
+    .logout-btn:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <h2>Cổng thanh toán demo</h2>
+
+  <!-- Authentication Section -->
+  <div class="auth-section" id="authSection">
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="showAuthForm('login')">Đăng nhập</button>
+      <button class="auth-tab" onclick="showAuthForm('register')">Đăng ký</button>
+    </div>
+    
+    <div class="auth-form active" id="loginForm">
+      <div class="form-group">
+        <label for="loginUsername">Tên đăng nhập:</label>
+        <input type="text" id="loginUsername" placeholder="Nhập tên đăng nhập">
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Mật khẩu:</label>
+        <input type="password" id="loginPassword" placeholder="Nhập mật khẩu">
+      </div>
+      <button onclick="login()">Đăng nhập</button>
+      <div id="loginError" class="error"></div>
+    </div>
+    
+    <div class="auth-form" id="registerForm">
+      <div class="form-group">
+        <label for="registerUsername">Tên đăng nhập:</label>
+        <input type="text" id="registerUsername" placeholder="Nhập tên đăng nhập">
+      </div>
+      <div class="form-group">
+        <label for="registerPassword">Mật khẩu:</label>
+        <input type="password" id="registerPassword" placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)">
+      </div>
+      <div class="form-group">
+        <label for="registerEmail">Email:</label>
+        <input type="email" id="registerEmail" placeholder="Nhập email">
+      </div>
+      <button onclick="register()">Đăng ký</button>
+      <div id="registerError" class="error"></div>
+    </div>
+  </div>
+
+  <!-- User Info Section (hidden by default) -->
+  <div class="user-info" id="userInfo" style="display: none;">
+    <h3>Chào mừng, <span id="userDisplayName"></span>!</h3>
+    <p>Email: <span id="userEmail"></span></p>
+  </div>
+
+  <!-- Balance Section (hidden by default) -->
+  <div class="balance-section" id="balanceSection" style="display: none;">
+    <h3>Số dư tài khoản</h3>
+    <div class="balance-amount" id="balanceAmount">0 VNĐ</div>
+    <button onclick="showAddBalanceForm()">Nạp tiền vào tài khoản</button>
+    <button class="logout-btn" onclick="logout()">Đăng xuất</button>
+  </div>
+
+  <!-- Products Section (hidden by default) -->
+  <div class="product-list" id="productSection" style="display: none;">
+    <h3>Danh sách sản phẩm</h3>
+    <div class="product-item">
+      <p><strong>Bánh trứng</strong> – 5,000 VNĐ</p>
+      <button onclick="buyProduct(5000, 'Banh trung')">Mua ngay</button>
+    </div>
+
+    <div class="product-item">
+      <p><strong>Trà sữa</strong> – 15,000 VNĐ</p>
+      <button onclick="buyProduct(15000, 'Tra sua')">Mua ngay</button>
+    </div>
+
+    <div class="product-item">
+      <p><strong>Nước ngọt</strong> – 12,000 VNĐ</p>
+      <button onclick="buyProduct(12000, 'Nuoc ngot')">Mua ngay</button>
+    </div>
+  </div>
+
+  <!-- Custom Payment Section (hidden by default) -->
+  <div class="custom-payment" id="customPaymentSection" style="display: none;">
+    <h3>Thanh toán số tiền tùy chọn</h3>
+    <div class="form-group">
+      <label for="customAmount">Số tiền (VNĐ):</label>
+      <input type="number" id="customAmount" placeholder="Nhập số tiền">
+    </div>
+    <div class="form-group">
+      <label for="customDescription">Mô tả thanh toán:</label>
+      <input type="text" id="customDescription" placeholder="Mô tả thanh toán">
+    </div>
+    <button onclick="generateCustomQR()">Tạo mã QR thanh toán</button>
+    <div id="amountError" class="error"></div>
+  </div>
+
+  <!-- Add Balance Form (hidden by default) -->
+  <div class="custom-payment" id="addBalanceSection" style="display: none;">
+    <h3>Nạp tiền vào tài khoản</h3>
+    <div class="form-group">
+      <label for="addBalanceAmount">Số tiền cần nạp (VNĐ):</label>
+      <input type="number" id="addBalanceAmount" placeholder="Nhập số tiền">
+    </div>
+    <button onclick="generateAddBalanceQR()">Tạo mã QR nạp tiền</button>
+    <button onclick="hideAddBalanceForm()" style="background-color: #95a5a6;">Hủy</button>
+    <div id="addBalanceError" class="error"></div>
+  </div>
+
+  <!-- QR Code Display -->
+  <div id="qrcode"></div>
+
+  <script>
+    // User management
+    let currentUser = null;
+    let users = JSON.parse(localStorage.getItem('paymentUsers')) || [];
+    
+    // Check if user is already logged in
+    window.onload = function() {
+      const savedUser = localStorage.getItem('currentUser');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        showUserInterface();
+      }
+    };
+
+    function showAuthForm(formType) {
+      document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+      
+      if (formType === 'login') {
+        document.querySelector('.auth-tab:nth-child(1)').classList.add('active');
+        document.getElementById('loginForm').classList.add('active');
+      } else {
+        document.querySelector('.auth-tab:nth-child(2)').classList.add('active');
+        document.getElementById('registerForm').classList.add('active');
+      }
+    }
+
+    function register() {
+      const username = document.getElementById('registerUsername').value;
+      const password = document.getElementById('registerPassword').value;
+      const email = document.getElementById('registerEmail').value;
+      const errorDiv = document.getElementById('registerError');
+      
+      errorDiv.textContent = '';
+      
+      // Validation
+      if (!username || !password || !email) {
+        errorDiv.textContent = 'Vui lòng điền đầy đủ thông tin';
+        return;
+      }
+      
+      if (password.length < 6) {
+        errorDiv.textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
+        return;
+      }
+      
+      if (users.find(user => user.username === username)) {
+        errorDiv.textContent = 'Tên đăng nhập đã tồn tại';
+        return;
+      }
+      
+      // Create new user
+      const newUser = {
+        username,
+        password, // In real app, this should be hashed
+        email,
+        balance: 0,
+        transactions: []
+      };
+      
+      users.push(newUser);
+      localStorage.setItem('paymentUsers', JSON.stringify(users));
+      
+      errorDiv.textContent = 'Đăng ký thành công! Vui lòng đăng nhập.';
+      showAuthForm('login');
+      document.getElementById('loginUsername').value = username;
+    }
+
+    function login() {
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+      const errorDiv = document.getElementById('loginError');
+      
+      errorDiv.textContent = '';
+      
+      const user = users.find(u => u.username === username && u.password === password);
+      
+      if (user) {
+        currentUser = user;
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        showUserInterface();
+      } else {
+        errorDiv.textContent = 'Tên đăng nhập hoặc mật khẩu không đúng';
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      hideUserInterface();
+      document.getElementById('loginUsername').value = '';
+      document.getElementById('loginPassword').value = '';
+      showAuthForm('login');
+    }
+
+    function showUserInterface() {
+      document.getElementById('authSection').style.display = 'none';
+      document.getElementById('userInfo').style.display = 'block';
+      document.getElementById('balanceSection').style.display = 'block';
+      document.getElementById('productSection').style.display = 'block';
+      document.getElementById('customPaymentSection').style.display = 'block';
+      
+      document.getElementById('userDisplayName').textContent = currentUser.username;
+      document.getElementById('userEmail').textContent = currentUser.email;
+      updateBalanceDisplay();
+    }
+
+    function hideUserInterface() {
+      document.getElementById('authSection').style.display = 'block';
+      document.getElementById('userInfo').style.display = 'none';
+      document.getElementById('balanceSection').style.display = 'none';
+      document.getElementById('productSection').style.display = 'none';
+      document.getElementById('customPaymentSection').style.display = 'none';
+      document.getElementById('addBalanceSection').style.display = 'none';
+      document.getElementById('qrcode').innerHTML = '';
+    }
+
+    function updateBalanceDisplay() {
+      document.getElementById('balanceAmount').textContent = currentUser.balance.toLocaleString() + ' VNĐ';
+    }
+
+    function showAddBalanceForm() {
+      document.getElementById('addBalanceSection').style.display = 'block';
+      document.getElementById('addBalanceAmount').value = '';
+      document.getElementById('addBalanceError').textContent = '';
+    }
+
+    function hideAddBalanceForm() {
+      document.getElementById('addBalanceSection').style.display = 'none';
+    }
+
+    function generateAddBalanceQR() {
+      const amountInput = document.getElementById('addBalanceAmount');
+      const errorDiv = document.getElementById('addBalanceError');
+      
+      errorDiv.textContent = '';
+      
+      const amount = parseInt(amountInput.value);
+      if (isNaN(amount) || amount <= 0) {
+        errorDiv.textContent = 'Vui lòng nhập số tiền hợp lệ';
+        return;
+      }
+      
+      let bank = "ACB";
+      let account = "34979417";
+      let description = `Nap tien cho ${currentUser.username}`;
+      
+      let qrUrl = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(description)}`;
+
+      document.getElementById('qrcode').innerHTML = `
+        <h3>Nạp tiền vào tài khoản - ${amount.toLocaleString()} VNĐ</h3>
+        <p>Quét mã QR để nạp tiền. Sau khi chuyển khoản, số dư sẽ được cập nhật.</p>
+        <img src="${qrUrl}" alt="QR Nạp tiền" />
+        <div style="margin-top: 15px;">
+          <button onclick="simulateAddBalance(${amount})" style="background-color: #27ae60;">Mô phỏng đã nạp tiền</button>
+          <p><small><em>Lưu ý: Trong ứng dụng thực tế, số dư sẽ được cập nhật tự động khi nhận được tiền</em></small></p>
+        </div>
+      `;
+    }
+
+    function simulateAddBalance(amount) {
+      // In real app, this would be handled by webhook when payment is received
+      currentUser.balance += amount;
+      currentUser.transactions.push({
+        type: 'deposit',
+        amount: amount,
+        date: new Date().toISOString(),
+        description: 'Nạp tiền vào tài khoản'
+      });
+      
+      // Update user in storage
+      const userIndex = users.findIndex(u => u.username === currentUser.username);
+      if (userIndex !== -1) {
+        users[userIndex] = currentUser;
+        localStorage.setItem('paymentUsers', JSON.stringify(users));
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      }
+      
+      updateBalanceDisplay();
+      document.getElementById('qrcode').innerHTML += `
+        <div class="success">
+          <strong>Đã nạp thành công ${amount.toLocaleString()} VNĐ vào tài khoản!</strong>
+        </div>
+      `;
+    }
+
+    function buyProduct(amount, productName) {
+      if (currentUser.balance < amount) {
+        alert('Số dư không đủ để mua sản phẩm này!');
+        return;
+      }
+      
+      if (confirm(`Bạn có chắc muốn mua ${productName} với giá ${amount.toLocaleString()} VNĐ?`)) {
+        currentUser.balance -= amount;
+        currentUser.transactions.push({
+          type: 'purchase',
+          amount: amount,
+          date: new Date().toISOString(),
+          description: `Mua ${productName}`
+        });
+        
+        // Update user in storage
+        const userIndex = users.findIndex(u => u.username === currentUser.username);
+        if (userIndex !== -1) {
+          users[userIndex] = currentUser;
+          localStorage.setItem('paymentUsers', JSON.stringify(users));
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+        
+        updateBalanceDisplay();
+        alert(`Mua ${productName} thành công! Số dư còn lại: ${currentUser.balance.toLocaleString()} VNĐ`);
+      }
+    }
+
+    function generateCustomQR() {
+      const amountInput = document.getElementById('customAmount');
+      const descriptionInput = document.getElementById('customDescription');
+      const errorDiv = document.getElementById('amountError');
+      
+      errorDiv.textContent = '';
+      
+      const amount = parseInt(amountInput.value);
+      if (isNaN(amount) || amount <= 0) {
+        errorDiv.textContent = 'Vui lòng nhập số tiền hợp lệ';
+        return;
+      }
+      
+      let description = descriptionInput.value.trim();
+      if (description === "") {
+        description = "Thanh toan tuy chon";
+      }
+      
+      let bank = "ACB";
+      let account = "34979417";
+      let qrUrl = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(description)}`;
+
+      document.getElementById('qrcode').innerHTML = `
+        <h3>${description} - ${amount.toLocaleString()} VNĐ</h3>
+        <img src="${qrUrl}" alt="QR Thanh toán" />
+      `;
+    }
+  </script>
+</body>
+</html>
